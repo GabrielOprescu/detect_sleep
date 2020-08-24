@@ -19,12 +19,14 @@ class SecondCounter:
 
 # Initiate paths
 
-blink_model_path = './open_closed_eye_model'
-class_names = ['close', 'open']
+blink_model_path = './open_close_eye_model'
+class_names = ['open', 'close']
 eye_xml_path = './haarcascade_eye.xml'
+face_xml_path = './haarcascade_frontalface_alt.xml'
 
 # Load models
 
+face_detector = cv2.CascadeClassifier(face_xml_path)
 eye_detector = cv2.CascadeClassifier(eye_xml_path)
 blink_model = tf.keras.models.load_model(blink_model_path)
 
@@ -39,7 +41,7 @@ def main():
     minNeighbors = 8  # is the best one. can be adjusted
     scaleFactor = 1.2
     fps = capture.get(cv2.CAP_PROP_FPS)
-    print(f'The video is runing at {fps} frames per second')
+    print(f'The video is running at {fps} frames per second')
 
     eye_status = 'close'
     new_eye_status = 'close'
@@ -61,6 +63,8 @@ def main():
 
         # capture the frame
         ret, frame = capture.read()
+
+        # frame = cv2.convertScaleAbs(frame, alpha=2.5, beta=20)
 
         # transform image to gray scale
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -93,7 +97,7 @@ def main():
             else:
                 warn_msg = 'All good'
 
-            print('Frame_counter: ', frame_counter)
+                # print('Frame_counter: ', frame_counter)
 
             cv2.putText(frame, eye_status, org=(x, y), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5,
                         color=(255, 255, 255))
